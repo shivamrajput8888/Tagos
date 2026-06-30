@@ -20,20 +20,6 @@ mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
 
 tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
 
-model = TagosModel(
-    MODEL_NAME,
-    len(mlb.classes_)
-)
-
-
-model.load_state_dict(
-    torch.load(
-        SAVE_DIR + "tagos_model.pth",
-        map_location="cpu"
-    )
-)
-
-
 if not os.path.exists(MODEL_PATH):
 
     print("Downloading TAGOS model...")
@@ -50,6 +36,11 @@ if not os.path.exists(MODEL_PATH):
                 f.write(chunk)
 
     print("Model downloaded successfully!")
+
+model = TagosModel(
+    MODEL_NAME,
+    len(mlb.classes_)
+)
 
 model.load_state_dict(
     torch.load(
