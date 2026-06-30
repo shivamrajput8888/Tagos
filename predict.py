@@ -1,3 +1,4 @@
+import os
 import torch
 import joblib
 import requests
@@ -7,24 +8,17 @@ from transformers import DistilBertTokenizer
 from bert_model import TagosModel
 from config import *
 
-mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
-
-tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
-
-import os
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SAVE_DIR = os.path.join(BASE_DIR, "saved_model") + "/"
 
-model = TagosModel(
-    MODEL_NAME,
-    len(mlb.classes_)
-)
+MODEL_PATH = SAVE_DIR + "tagos_model.pth"
 
 MODEL_URL = "https://huggingface.co/Shivacer8888/tagos-model/resolve/main/tagos_model.pth"
 
-MODEL_PATH = SAVE_DIR + "tagos_model.pth"
+mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
+
+tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
 
 
 if not os.path.exists(MODEL_PATH):
