@@ -43,24 +43,35 @@ if not os.path.exists(MODEL_PATH):
 
 # ================= DEBUG =================
 
-print("=" * 50)
+import hashlib
+
+print("=" * 60)
+print("TAGOS DEBUG")
+print("=" * 60)
+
 print("MODEL PATH:", MODEL_PATH)
-print("EXISTS:", os.path.exists(MODEL_PATH))
+print("FILE EXISTS:", os.path.exists(MODEL_PATH))
 
 if os.path.exists(MODEL_PATH):
-    print("SIZE:", os.path.getsize(MODEL_PATH))
+
+    print("FILE SIZE:", os.path.getsize(MODEL_PATH))
 
     with open(MODEL_PATH, "rb") as f:
-        first = f.read(100)
+        first100 = f.read(100)
 
-    print("FIRST BYTES:", first)
+    print("FIRST 100 BYTES:", first100)
 
-# ======================================== 
+    with open(MODEL_PATH, "rb") as f:
+        sha = hashlib.sha256(f.read()).hexdigest()
+
+    print("SHA256:", sha)
 
 state_dict = torch.load(
     MODEL_PATH,
     map_location="cpu"
 )
+
+print("MODEL LOADED SUCCESSFULLY")
 
 model.load_state_dict(state_dict)
 
