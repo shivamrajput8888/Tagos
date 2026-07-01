@@ -18,45 +18,51 @@ MODEL_URL = "https://huggingface.co/Shivacer8888/tagos-model/resolve/main/tagos_
 
 mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
 
-tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
+tokenizer = DistilBertTokenizer.from_pretrained(
+    "distilbert-base-uncased"
+)
 
 model = TagosModel(
     MODEL_NAME,
     len(mlb.classes_)
 )
 
-
-model.load_state_dict(
-    torch.load(
-        SAVE_DIR + "tagos_model.pth",
-        map_location="cpu"
-    )
-)
-
-
+# Download model only if missing
 if not os.path.exists(MODEL_PATH):
 
     print("Downloading TAGOS model...")
 
-    response = requests.get(MODEL_URL, stream=True)
+    response = requests.get(MODEL_URL)
 
     response.raise_for_status()
 
     with open(MODEL_PATH, "wb") as f:
+        f.write(response.content)
 
-        for chunk in response.iter_content(chunk_size=8192):
+    print("Download completed.")
 
-            if chunk:
-                f.write(chunk)
+# ================= DEBUG =================
 
-    print("Model downloaded successfully!")
+print("=" * 50)
+print("MODEL PATH:", MODEL_PATH)
+print("EXISTS:", os.path.exists(MODEL_PATH))
 
-model.load_state_dict(
-    torch.load(
-        MODEL_PATH,
-        map_location="cpu"
-    )
+if os.path.exists(MODEL_PATH):
+    print("SIZE:", os.path.getsize(MODEL_PATH))
+
+    with open(MODEL_PATH, "rb") as f:
+        first = f.read(100)
+
+    print("FIRST BYTES:", first)
+
+# ======================================== 
+
+state_dict = torch.load(
+    MODEL_PATH,
+    map_location="cpu"
 )
+
+model.load_state_dict(state_dict)
 
 model.eval()
 
