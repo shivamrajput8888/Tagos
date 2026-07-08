@@ -31,8 +31,9 @@ mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
 from transformers import DistilBertTokenizerFast
 
 tokenizer = DistilBertTokenizerFast.from_pretrained(
-    SAVE_DIR
+    "distilbert-base-uncased"
 )
+
 
 model = TagosModel(
     MODEL_NAME,
