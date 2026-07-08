@@ -28,8 +28,10 @@ MODEL_URL = "https://huggingface.co/Shivacer8888/tagos-model/resolve/main/tagos_
 
 mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
 
-tokenizer = DistilBertTokenizer.from_pretrained(
-    "distilbert-base-uncased"
+from transformers import DistilBertTokenizerFast
+
+tokenizer = DistilBertTokenizerFast.from_pretrained(
+    SAVE_DIR
 )
 
 model = TagosModel(
