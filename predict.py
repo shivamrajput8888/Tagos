@@ -7,10 +7,10 @@ import psutil
 
 process = psutil.Process(os.getpid())
 
-print("=" * 60)
-print("TAGOS MEMORY DEBUG")
-print("=" * 60)
-print("Memory before loading model:",
+print("=" * 50)
+print("TAGOS MEMORY")
+print("=" * 50)
+print("Startup:",
       process.memory_info().rss / (1024 * 1024), "MB")
 
 from transformers import DistilBertTokenizer
@@ -27,18 +27,24 @@ MODEL_PATH = SAVE_DIR + "tagos_model.pth"
 MODEL_URL = "https://huggingface.co/Shivacer8888/tagos-model/resolve/main/tagos_model.pth"
 
 mlb = joblib.load(SAVE_DIR + "label_encoder.pkl")
+print("After label encoder:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 from transformers import DistilBertTokenizerFast
 
 tokenizer = DistilBertTokenizerFast.from_pretrained(
     "distilbert-base-uncased"
 )
-
+print("After tokenizer:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 model = TagosModel(
     MODEL_NAME,
     len(mlb.classes_)
 )
+print("After model creation:",
+      process.memory_info().rss / (1024 * 1024), "MB")
+
 
 # Download model only if missing
 if not os.path.exists(MODEL_PATH):
@@ -83,16 +89,22 @@ state_dict = torch.load(
     MODEL_PATH,
     map_location="cpu"
 )
+print("After torch.load:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 print("MODEL LOADED SUCCESSFULLY")
 
 model.load_state_dict(state_dict)
+print("After load_state_dict:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 print("Memory after loading model:",
       process.memory_info().rss / (1024 * 1024), "MB")
 
 model.eval()
 
+print("FINAL:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 def predict_tags(text, top_k=5):
 
