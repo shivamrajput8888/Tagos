@@ -2,6 +2,16 @@ import os
 import torch
 import joblib
 import requests
+import os
+import psutil
+
+process = psutil.Process(os.getpid())
+
+print("=" * 60)
+print("TAGOS MEMORY DEBUG")
+print("=" * 60)
+print("Memory before loading model:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 from transformers import DistilBertTokenizer
 
@@ -74,6 +84,9 @@ state_dict = torch.load(
 print("MODEL LOADED SUCCESSFULLY")
 
 model.load_state_dict(state_dict)
+
+print("Memory after loading model:",
+      process.memory_info().rss / (1024 * 1024), "MB")
 
 model.eval()
 
